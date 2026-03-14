@@ -25,3 +25,9 @@ data/
 # OS-generated files
 .DS_Store
 Thumbs.db
+
+# Claude session ID
+claude_session_id.txt
+
+# Miscellaneous temporary files
+temp/
