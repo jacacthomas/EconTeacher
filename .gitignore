@@ -1,0 +1,27 @@
+# Python virtual environment (managed by Poetry)
+.venv/
+
+# Python bytecode cache — generated automatically, not needed in version control
+__pycache__/
+*.pyc
+*.pyo
+
+# Poetry lock file is committed (it pins exact dependency versions),
+# but the virtual environment itself is not.
+
+# Environment variables (may contain secrets like API keys — never commit these)
+.env
+
+# All generated output files — these are produced by running the build scripts
+# and should not be version controlled (they can always be regenerated).
+output/
+
+# Downloaded PDF — can be re-downloaded by running build_syllabus_from_pdf.py
+data/
+
+# Claude Code session files — not part of the project source
+.claude/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
