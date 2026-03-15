@@ -64,6 +64,18 @@ X_TOLERANCE = 1.5
 HEADER_FRACTION = 0.07   # top 7%  of page
 FOOTER_FRACTION = 0.94   # bottom 6% of page
 
+# Fraction of page width beyond which characters are treated as right-margin
+# boilerplate and discarded. The "Do not write outside the box" text sits at
+# ~91% across a 595pt A4 page. Legitimate content never exceeds ~89%.
+RIGHT_MARGIN_FRACTION = 0.88
+
+# Minimum blank vertical space (pt) between the question stem and the page
+# footer that indicates the answer options are four diagrams with their
+# A/B/C/D labels embedded in the images (not as separate text characters).
+# In these questions the page contains no option-letter text at all, so the
+# blank region is split into four equal strips for extraction.
+EMBEDDED_DIAGRAM_MIN_GAP = 200
+
 # Resolution (DPI) for rendered diagram PNG images.
 DIAGRAM_DPI = 200
 
@@ -95,14 +107,16 @@ _BOILERPLATE_RE = re.compile(
         r"^box$",
         r"^Turn over\s*[►▶]?$",
         r"^\*\s+\*$",
-        r"^\d{1,2}$",                          # lone page numbers
-        r"^IB/G/[A-Za-z0-9/]+$",             # AQA document reference codes
-        r"^QUESTION \d+ IS THE LAST.*$",
+        r"^\d{1,2}$",                              # lone page numbers
+        r"^IB/[A-Z]/[A-Za-z0-9/]+$",             # AQA document reference codes (IB/G/, IB/M/, etc.)
+        r"^QUESTION \d+ IS THE.*$",               # "QUESTION 20 IS THE LAST..." (split across lines)
+        r"^LAST QUESTION IN SECTION A$",
         r"^QUESTION IN SECTION A$",
-        r"^Section A$",
+        r"^END OF SECTION A$",                    # used in 2022+ papers instead of "QUESTION 20..."
+        r"^Section A(?:\s+box)?$",                # "Section A" or "Section A box" (2022+ header)
         r"^Answer all questions in this section\.$",
         r"^Only one answer per question is allowed\.$",
-        r"^For each answer completely fill in.*$",
+        r"^For each (?:answer|question) completely fill in.*$",  # wording varies by year
         r"^CORRECT METHOD.*$",
         r"^WRONG METHODS?.*$",
         r"^If you want to change.*$",
@@ -125,9 +139,11 @@ def _strip_latex(text):
 
 
 # Matches the start of a new question: two digit tokens then question text.
-# Requiring [A-Z].{2,} prevents stray subscript digits (e.g. "1 2 1")
-# from being misidentified as question numbers.
-_Q_START_RE = re.compile(r"^(\d) (\d) ([A-Z].{2,})$")
+# The text after the number must start with a non-digit and be at least
+# 3 chars long. Using [^\d] (rather than [A-Z]) handles questions that
+# open with a quotation mark, e.g. "'Large pay bonuses...' This statement".
+# Stray subscript digit strings like "1 2 1" are rejected because "1" is a digit.
+_Q_START_RE = re.compile(r"^(\d) (\d) ([^\d].{2,})$")
 
 # Matches a text answer option, e.g. "A consumers expressing their tastes..."
 _OPTION_WITH_TEXT_RE = re.compile(r"^([ABCD]) (.+)$")
@@ -276,8 +292,15 @@ def _page_lines(page, page_idx):
     h          = page.height
     header_cut = h * HEADER_FRACTION
     footer_cut = h * FOOTER_FRACTION
+    right_cut  = page.width * RIGHT_MARGIN_FRACTION
 
-    chars = [c for c in page.chars if header_cut < c["top"] < footer_cut]
+    # The right-margin text "Do not write outside the box" appears at ~x=546
+    # on a 595pt-wide page. It is excluded here rather than in _BOILERPLATE_RE
+    # because it sits at the same vertical position as question content (within
+    # LINE_GAP_THRESHOLD), which would cause the two texts to be merged into
+    # the same line before the boilerplate filter can act.
+    chars = [c for c in page.chars if header_cut < c["top"] < footer_cut
+             and c["x0"] < right_cut]
 
     result = []
     for line_chars in _group_chars_to_lines(chars):
@@ -477,6 +500,84 @@ def _extract_option_diagrams(pdf_path, option_lines, pdf_stem, q_num, figures_di
     return figure_paths
 
 
+def _extract_embedded_option_diagrams(pdf_path, q_lines, pdf_stem, q_num, figures_dir):
+    """
+    Handles MCQs where the four diagram options carry no separate text labels
+    (the A/B/C/D markers are rendered inside the vector graphic, invisible to
+    pdfplumber). Found in questions such as "Which of the following AD/AS
+    diagrams best illustrates...".
+
+    Strategy: find the large blank vertical region below the question stem and
+    split it into four equal horizontal strips, one per option.
+
+    The blank region is bounded by:
+      - TOP: bottom of the last non-[1 mark] text line in q_lines
+      - BOTTOM: depends on where the "[1 mark]" line falls —
+          * If [1 mark] appears AFTER a large gap (diagrams then mark): use
+            the top of the [1 mark] line as the bottom boundary.
+          * If [1 mark] appears immediately after the stem (mark then
+            diagrams): use the page footer cut as the bottom boundary.
+
+    Returns a dict mapping option letter → PNG path, or {} if no suitable
+    blank region is found.
+    """
+    mark_lines = [
+        ld for ld in q_lines
+        if re.match(r"^\[1 mark\]$", _strip_latex(ld["text"]), re.IGNORECASE)
+    ]
+    text_lines = [
+        ld for ld in q_lines
+        if not re.match(r"^\[1 mark\]$", _strip_latex(ld["text"]), re.IGNORECASE)
+    ]
+
+    if not text_lines:
+        return {}
+
+    page_idx    = text_lines[0]["page"]
+    text_bottom = max(ld["bottom"] for ld in text_lines)
+
+    with pdfplumber.open(pdf_path) as pdf:
+        page       = pdf.pages[page_idx]
+        page_height = page.height
+        page_width  = page.width
+
+    footer_cut = page_height * FOOTER_FRACTION
+
+    if mark_lines:
+        mark_top    = min(ld["top"]    for ld in mark_lines)
+        mark_bottom = max(ld["bottom"] for ld in mark_lines)
+        if mark_top - text_bottom > EMBEDDED_DIAGRAM_MIN_GAP:
+            # Diagrams occupy the space between the stem and [1 mark].
+            region_y0, region_y1 = text_bottom, mark_top
+        else:
+            # [1 mark] is printed immediately below the stem; diagrams follow.
+            region_y0, region_y1 = mark_bottom, footer_cut
+    else:
+        region_y0, region_y1 = text_bottom, footer_cut
+
+    if region_y1 - region_y0 < EMBEDDED_DIAGRAM_MIN_GAP:
+        return {}
+
+    height_each  = (region_y1 - region_y0) / 4
+    figure_paths = {}
+
+    for i, letter in enumerate("ABCD"):
+        y0       = region_y0 + i * height_each
+        y1       = region_y0 + (i + 1) * height_each
+        png_path = os.path.join(
+            figures_dir,
+            f"mcq_{pdf_stem}_q{q_num:02d}_option_{letter.lower()}.png",
+        )
+        _render_region_png(
+            pdf_path, page_idx, y0, y1,
+            DIAGRAM_X_MARGIN, page_width - DIAGRAM_X_MARGIN,
+            png_path,
+        )
+        figure_paths[letter] = png_path
+
+    return figure_paths
+
+
 # ── Main extraction function ──────────────────────────────────────────────────
 
 def extract_mcqs(pdf_path, figures_dir=None):
@@ -509,7 +610,8 @@ def extract_mcqs(pdf_path, figures_dir=None):
 
             all_lines.extend(_page_lines(page, page_idx))
 
-            if "QUESTION 20 IS THE LAST" in (page.extract_text() or ""):
+            raw = page.extract_text() or ""
+            if "QUESTION 20 IS THE" in raw or "END OF SECTION A" in raw:
                 break
 
     # ── Split flat line list into per-question blocks ─────────────────
@@ -570,10 +672,12 @@ def extract_mcqs(pdf_path, figures_dir=None):
 
             if m_text:
                 current_opt = m_text.group(1)
-                # Strip the bold option-letter prefix from the LaTeX text
-                # to keep just the option content (which is in regular font).
+                # Strip the option-letter prefix from the LaTeX text to keep
+                # just the option content. In most papers the letter is bold
+                # (\textbf{A}), but in the specimen it is plain (A), so both
+                # forms are handled here.
                 options[current_opt] = re.sub(
-                    r'^\\textbf\{[ABCD]\}\s*', '', text
+                    r'^(?:\\textbf\{[ABCD]\}|[ABCD])\s+', '', text
                 ).strip()
             elif m_letter:
                 current_opt          = plain.strip()
@@ -581,6 +685,18 @@ def extract_mcqs(pdf_path, figures_dir=None):
                 is_diagram_opt       = True
             elif current_opt and options[current_opt] is not None:
                 options[current_opt] += " " + text
+
+        # ── Detect embedded-label diagram options ─────────────────────
+        # Some questions (e.g. "Which AD/AS diagram best illustrates...")
+        # have four image-only options with no separate text labels. After
+        # the option parsing loop, all options will still be empty strings.
+        # Flag this case so the figures block can handle it.
+        embedded_diagram_opts = (
+            opts_start == -1
+            and all(v == "" for v in options.values())
+        )
+        if embedded_diagram_opts:
+            is_diagram_opt = True
 
         # ── Determine figure presence ─────────────────────────────────
         stem_lower = stem_text.lower()
@@ -592,8 +708,13 @@ def extract_mcqs(pdf_path, figures_dir=None):
         notes = []
         if has_figure and not is_diagram_opt:
             notes.append("question contains a diagram - extracted as PNG")
-        if is_diagram_opt:
+        if is_diagram_opt and not embedded_diagram_opts:
             notes.append("answer options are diagrams - each extracted as a separate PNG")
+        if embedded_diagram_opts:
+            notes.append(
+                "answer options are diagrams with embedded labels - "
+                "extracted as separate PNGs by equal vertical split"
+            )
         if "table below" in stem_lower:
             notes.append(
                 "answer options in a table - text extracted but layout may be imperfect"
@@ -603,7 +724,17 @@ def extract_mcqs(pdf_path, figures_dir=None):
         question_figure = None
 
         if figures_dir is not None:
-            if is_diagram_opt:
+            if embedded_diagram_opts:
+                # No letter labels — split the blank page region into four
+                # equal strips and extract each as a diagram option PNG.
+                figure_paths = _extract_embedded_option_diagrams(
+                    pdf_path, q_lines, pdf_stem, q_num, figures_dir
+                )
+                for letter, path in figure_paths.items():
+                    options[letter] = {"figure": path}
+
+            elif is_diagram_opt:
+                # Standard diagram options with visible letter labels.
                 figure_paths = _extract_option_diagrams(
                     pdf_path, option_lines, pdf_stem, q_num, figures_dir
                 )

@@ -15,18 +15,23 @@ import sys
 import json
 
 # Allow importing from the econteacher package in the parent directory.
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, PROJECT_ROOT)
 
 from econteacher.extract_mcqs import extract_mcqs
 
 
-INPUT_PDF = os.path.join(
-    os.path.dirname(__file__), "..", "data", "past_papers",
-    "as_paper_1", "qp", "june_2016_qp.pdf",
-)
-OUTPUT_DIR  = os.path.join(os.path.dirname(__file__), "..", "output", "mcqs")
+INPUT_PDF   = os.path.join(PROJECT_ROOT, "data", "past_papers", "as_paper_1", "qp", "june_2016_qp.pdf")
+OUTPUT_DIR  = os.path.join(PROJECT_ROOT, "output", "mcqs")
 FIGURES_DIR = os.path.join(OUTPUT_DIR, "figures")
 OUTPUT_JSON = os.path.join(OUTPUT_DIR, "as_paper_1_june_2016.json")
+
+
+def _make_relative(path):
+    """Converts an absolute path to a path relative to the project root."""
+    if path is None:
+        return None
+    return os.path.relpath(path, PROJECT_ROOT)
 
 
 def main():
@@ -36,6 +41,13 @@ def main():
     print(f"Extracting MCQs from:\n  {INPUT_PDF}\n")
     questions = extract_mcqs(INPUT_PDF, figures_dir=FIGURES_DIR)
     print(f"Extracted {len(questions)} questions.\n")
+
+    # Convert all figure paths to be relative to the project root.
+    for q in questions:
+        q["question_figure"] = _make_relative(q["question_figure"])
+        for letter, opt in q["options"].items():
+            if isinstance(opt, dict) and "figure" in opt:
+                q["options"][letter] = {"figure": _make_relative(opt["figure"])}
 
     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
         json.dump(questions, f, indent=2, ensure_ascii=False)
