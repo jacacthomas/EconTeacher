@@ -165,17 +165,24 @@ def _parse_content_table(table) -> tuple[list[str], list[str]]:
         # The HTML structure is inconsistent across topics on the AQA website:
         #   - Some cells:  <td><span>full note text</span></td>
         #   - Other cells: <td><p>note 1</p><p>note 2</p></td>
-        # We search for direct child <p> and <span> elements (recursive=False
-        # ensures we only get top-level tags, not <strong> or <em> nested
-        # inside them). Each top-level element is treated as a separate note.
         #
-        # We pass " " as the separator to get_text() so that inline emphasis
-        # elements (e.g. <strong>not</strong>) don't merge with surrounding
-        # words. The website also inserts HTML comment nodes (<!-- -->) around
-        # inline elements as a React rendering artefact; these are ignored by
-        # get_text(), and the space separator bridges the gap correctly.
-        for block in right_cell.find_all(["p", "span"], recursive=False):
-            text = _normalise_text(block.get_text(" ", strip=True))
+        # We split only on top-level <p> tags, which represent genuine
+        # paragraph breaks between distinct notes. If no <p> tags are present,
+        # the entire cell text is treated as one note.
+        #
+        # We do NOT split on <span> tags: some cells use multiple adjacent
+        # <span> elements for a single note (e.g. wrapping <strong>not</strong>
+        # in its own <span>), which would incorrectly produce multiple items.
+        # get_text(" ", strip=True) handles inline emphasis and the React
+        # HTML comment artefacts (<!-- -->) correctly in both cases.
+        p_tags = right_cell.find_all("p", recursive=False)
+        if p_tags:
+            for p in p_tags:
+                text = _normalise_text(p.get_text(" ", strip=True))
+                if text:
+                    additional_info.append(text)
+        else:
+            text = _normalise_text(right_cell.get_text(" ", strip=True))
             if text:
                 additional_info.append(text)
 
