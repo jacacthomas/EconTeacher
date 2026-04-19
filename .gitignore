@@ -32,4 +32,7 @@ claude_session_id.txt
 # Miscellaneous temporary files
 temp/
 
+# School-specific material — not for public repository
+dgcl/
+
 # test change

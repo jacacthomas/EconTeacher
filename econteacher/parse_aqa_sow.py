@@ -384,9 +384,12 @@ def parse_sow(docx_path: str) -> dict:
             continue
 
         # ── Catch-all: unrecognised Normal para within an active field ─────────
-        # Handles the rare case where a content item appears as Normal rather
-        # than List Paragraph (e.g. a single learning outcome, a resource line).
-        if current_bundle is not None and current_field in (
+        # Handles cases where content appears as Normal rather than List
+        # Paragraph (e.g. a single spec content sentence, a lone learning
+        # outcome, a resource line).
+        if current_bundle is not None and current_field == 'spec_content' and current_topic_id:
+            current_bundle["topics"][current_topic_id]["spec_content"].append(text)
+        elif current_bundle is not None and current_field in (
                 'learning_outcomes', 'activities'):
             current_bundle[current_field].append(text)
         elif current_bundle is not None and current_field == 'resources':
