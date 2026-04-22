@@ -23,9 +23,20 @@ For example, content item 3.1.1.1.1 gets atom 3.1.1.1.1.1
 
 Atom fields
 -----------
-    type         : null  (to be filled in later)
+    type         : null  (to be filled in later) — see docs/atom_types.txt
     atom_content : ""    (to be filled in later)
     notes        : ""    (to be filled in later)
+
+Valid values for "type"
+-----------------------
+    definition   — State a precise definition of a key term
+    concept      — Explain a concept, mechanism, or relationship in your own words
+    diagram      — Draw, label, and/or interpret a specific diagram
+    calculation  — Apply a formula or method to compute a numerical result
+    application  — Use a concept or model to analyse an unfamiliar real-world context
+    evaluation   — Assess strengths, limitations, or trade-offs of a theory, policy, or argument
+    recall       — Memorise a specific fact, statistic, or institutional detail
+                   (no deep understanding required; e.g. MPC inflation target = 2%)
 """
 
 import json
@@ -86,19 +97,30 @@ def build_atoms_scaffold(indexed_syllabus: dict, syllabus_label: str) -> dict:
         # Iterate over subsections (e.g. "3.1.1", "3.1.2")
         for subsection_id, subsection_data in section_data["subsections"].items():
 
-            scaffold["sections"][section_id]["subsections"][subsection_id] = {
+            subsection_node = {
                 "title": subsection_data["title"],
-                "topics": {}
+                "topics": {
+                    f"{subsection_id}.0": {
+                        "title": "General subsection atoms",
+                        "atoms": {f"{subsection_id}.0.1": make_blank_atom()}
+                    }
+                }
             }
+            scaffold["sections"][section_id]["subsections"][subsection_id] = subsection_node
 
             # Iterate over topics (e.g. "3.1.1.1", "3.1.1.2")
             for topic_id, topic_data in subsection_data["topics"].items():
 
-                scaffold["sections"][section_id]["subsections"][subsection_id] \
-                    ["topics"][topic_id] = {
-                        "title": topic_data["title"],
-                        "content_items": {}
+                topic_node = {
+                    "title": topic_data["title"],
+                    "content_items": {
+                        f"{topic_id}.0": {
+                            "text": "General topic atoms",
+                            "atoms": {f"{topic_id}.0.1": make_blank_atom()}
+                        }
                     }
+                }
+                subsection_node["topics"][topic_id] = topic_node
 
                 # Iterate over indexed content items (e.g. "3.1.1.1.1", "3.1.1.1.2")
                 for item_id, item_text in topic_data["content"].items():
@@ -107,13 +129,12 @@ def build_atoms_scaffold(indexed_syllabus: dict, syllabus_label: str) -> dict:
                     # The atom ID is the content item ID with ".1" appended.
                     atom_id = f"{item_id}.1"
 
-                    scaffold["sections"][section_id]["subsections"][subsection_id] \
-                        ["topics"][topic_id]["content_items"][item_id] = {
-                            "text": item_text,
-                            "atoms": {
-                                atom_id: make_blank_atom()
-                            }
+                    topic_node["content_items"][item_id] = {
+                        "text": item_text,
+                        "atoms": {
+                            atom_id: make_blank_atom()
                         }
+                    }
 
     return scaffold
 

@@ -1,0 +1,48 @@
+Pedagogical Atom Types
+======================
+
+Each atom has a "type" field that classifies the cognitive skill being developed.
+Valid values and their meanings:
+
+  definition   State a precise definition of a key term.
+               e.g. "Define price elasticity of demand."
+
+  concept      Explain a concept, mechanism, or relationship in your own words.
+               Maps broadly to AQA mark scheme AO1.
+               e.g. "Explain the difference between a movement along and a shift
+               of the demand curve."
+
+  diagram      Draw, label, and/or interpret a specific diagram.
+               Treated as a distinct skill because students can understand a
+               concept verbally while still being unable to draw it correctly.
+               e.g. "Draw a correctly labelled production possibility frontier."
+
+  calculation  Apply a formula or method to compute a numerical result.
+               e.g. "Calculate PED given price and quantity data."
+
+  application  Use a concept or model to analyse an unfamiliar real-world context.
+               Maps broadly to AQA mark scheme AO2.
+               e.g. "Explain how a rise in interest rates affects investment."
+
+  evaluation   Assess strengths, limitations, or trade-offs of a theory, policy,
+               or argument. Requires forming a judgement, not just understanding.
+               Maps broadly to AQA mark scheme AO3.
+               e.g. "Evaluate the effectiveness of a minimum wage in reducing
+               poverty."
+
+  recall       Memorise a specific fact, statistic, or institutional detail where
+               no deeper explanation is required.
+               e.g. "The MPC's inflation target is 2%."
+               Distinct from 'definition': recall covers loose facts; definition
+               requires precision and implies understanding.
+
+
+Notes on overlap
+----------------
+- "definition" vs "recall": definitions require precision and often imply
+  understanding; recall covers facts that don't need to be explained.
+- "concept" vs "application": concept = abstract understanding of the idea;
+  application = deploying it in a new context. These map to AO1 and AO2.
+- "diagram" is separate because it is a distinct skill in economics exams.
+- "evaluation" is essential for A-level and genuinely differs from understanding —
+  it requires forming and defending a judgement.
