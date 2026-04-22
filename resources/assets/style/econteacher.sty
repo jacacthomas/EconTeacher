@@ -1,0 +1,83 @@
+\RequirePackage{tcolorbox}
+\tcbuselibrary{skins}
+
+% Key Point — yellow; for the single most important idea on a slide
+\newtcolorbox{keypoint}{
+    enhanced,
+    colback=yellow!12,
+    colframe=yellow!60!black,
+    fonttitle=\bfseries,
+    title=Key Point,
+    arc=2pt,
+    boxrule=0.8pt,
+}
+
+% Formula — blue; for named equations and their variable key
+\newtcolorbox{formula}[1][Formula]{
+    enhanced,
+    colback=blue!5,
+    colframe=blue!45!black,
+    fonttitle=\bfseries,
+    title=#1,
+    arc=2pt,
+    boxrule=0.8pt,
+}
+
+% Example Question — teal; for exam-style questions posed to students
+\newtcolorbox{examplequestion}[1][Example Question]{
+    enhanced,
+    colback=teal!6,
+    colframe=teal!55!black,
+    fonttitle=\bfseries,
+    title=#1,
+    arc=2pt,
+    boxrule=0.8pt,
+}
+
+% Example Solution — green; always follows an examplequestion block
+\newtcolorbox{examplesolution}[1][Solution]{
+    enhanced,
+    colback=green!6,
+    colframe=green!45!black,
+    fonttitle=\bfseries,
+    title=#1,
+    arc=2pt,
+    boxrule=0.8pt,
+}
+
+% ---- Worksheet environments --------------------------------
+
+% Scenario — blue; for group discussion prompts on worksheets
+% Usage: \begin{scenario}{Scenario 1: Title with commas, fine} ... \end{scenario}
+\newtcolorbox{scenario}[1]{
+    enhanced,
+    colback=blue!5,
+    colframe=blue!45!black,
+    fonttitle=\bfseries,
+    title={#1},
+    arc=2pt,
+    boxrule=0.8pt,
+}
+
+% Instructions — blue; for worksheet-level instruction blocks
+\newtcolorbox{instructions}{
+    enhanced,
+    colback=blue!5,
+    colframe=blue!45!black,
+    fonttitle=\bfseries,
+    title=Instructions,
+    arc=2pt,
+    boxrule=0.8pt,
+}
+
+% Extract — grey; for data response source material
+% Usage: \begin{extract}{Source: Author, Year} ... \end{extract}
+\newtcolorbox{extract}[1]{
+    enhanced,
+    colback=gray!8,
+    colframe=gray!50,
+    fonttitle=\bfseries,
+    title={#1},
+    arc=2pt,
+    boxrule=0.8pt,
+}

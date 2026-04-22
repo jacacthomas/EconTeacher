@@ -32,7 +32,33 @@ claude_session_id.txt
 # Miscellaneous temporary files
 temp/
 
+# Editor / tool temp files (e.g. Claude Code's *.tex.tmp.PID.timestamp files)
+*.tmp
+*.tmp.*
+
 # School-specific material — not for public repository
 dgcl/
 
 # test change
+
+# PDFs compiled from LaTeX sources — regenerable from source
+resources/generated/**/*.pdf
+resources/templates/**/*.pdf
+
+# LaTeX auxiliary files — generated during compilation, not part of source
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb

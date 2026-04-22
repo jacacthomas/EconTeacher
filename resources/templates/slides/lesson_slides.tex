@@ -1,0 +1,240 @@
+% ============================================================
+% EconTeacher — Lesson Slides Template
+% Compile from this directory so the relative \input path to
+% econteacher.sty resolves correctly. Generated slides in
+% resources/generated/slides/ use the same relative path.
+%
+% BLOCK TYPES AVAILABLE:
+%   \begin{definition}       — precise definition of a key term (beamer built-in)
+%   \begin{formula}[TITLE]   — named equation + variable key
+%   \begin{keypoint}         — single most important idea on a slide
+%   \begin{example}          — real-world illustration (beamer built-in, green)
+%   \begin{examplequestion}[TITLE] — exam-style question posed to students
+%   \begin{examplesolution}[TITLE] — solution to the preceding examplequestion
+% ============================================================
+
+\documentclass[16pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\usepackage{graphicx}
+\graphicspath{{../../assets/images/}{./figures/}}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\input{../../assets/style/econteacher.sty}
+
+\title{TOPIC TITLE}
+\subtitle{TOPIC CONTENT CODE(S) | AQA A-level Economics | Year YEAR}
+\author{Dr Jac Thomas}
+\date{\today}
+
+\begin{document}
+
+% ---- Title -------------------------------------------------
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ---- Learning Objectives -----------------------------------
+\begin{frame}{Learning Objectives}
+    \textbf{To be able to\ldots}
+    \begin{itemize}
+        \item OBJECTIVE 1
+        \item OBJECTIVE 2
+        \item OBJECTIVE 3
+    \end{itemize}
+\end{frame}
+
+% ---- General Frame -----------------------------------------
+\begin{frame}{General Frame}
+	Some example paragraph text
+	\begin{itemize}
+		\item POINT 1
+		\item POINT 2
+		\item POINT 3
+	\end{itemize}
+\end{frame}
+
+
+% ---- Definition --------------------------------------------
+\begin{frame}{FRAME TITLE}
+    \begin{definition}
+        \textbf{TERM} is DEFINITION.
+    \end{definition}
+\end{frame}
+
+% ---- Formula -----------------------------------------------
+\begin{frame}{FRAME TITLE}
+    \begin{formula}[FORMULA NAME]
+        \Large
+        \[ FORMULA \]
+        \normalsize
+        Where: \textbf{VAR} = meaning, \textbf{VAR} = meaning
+    \end{formula}
+\end{frame}
+
+% ---- Key Point ---------------------------------------------
+\begin{frame}{FRAME TITLE}
+    \begin{keypoint}
+        KEY POINT TEXT.
+    \end{keypoint}
+\end{frame}
+
+% ---- Real-world Example ------------------------------------
+% Use for an illustration of a concept happening in the real world.
+\begin{frame}{FRAME TITLE}
+    \begin{example}
+        REAL-WORLD EXAMPLE TEXT.
+    \end{example}
+\end{frame}
+
+% ---- Example Question + Solution ---------------------------
+% examplequestion and solution always appear together.
+% They may be on the same frame if space allows, or split across two.
+\begin{frame}{FRAME TITLE}
+    \begin{examplequestion}
+        QUESTION TEXT.
+    \end{examplequestion}
+
+    \vspace{0.5em}
+
+    \begin{examplesolution}
+        \textbf{Step 1:} \ldots \\[0.3em]
+        \textbf{Step 2:} \ldots \\[0.3em]
+        \alert{Answer:} ANSWER.
+    \end{examplesolution}
+\end{frame}
+
+% ---- Full-frame Diagram ------------------------------------
+\begin{frame}{FRAME TITLE}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                axis lines = middle,
+                xlabel = {XLABEL},
+                ylabel = {YLABEL},
+                xmin=0, xmax=10, ymin=0, ymax=10,
+                xtick=\empty, ytick=\empty,
+                width=10cm, height=7cm,
+                xlabel style={below right},
+                ylabel style={above left},
+            ]
+            % DIAGRAM CODE HERE
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---- Two-column: Diagram + Notes ---------------------------
+\begin{frame}{FRAME TITLE}
+    \begin{columns}
+        \begin{column}{0.57\textwidth}
+            \begin{center}
+                \begin{tikzpicture}
+                    \begin{axis}[
+                        axis lines = middle,
+                        xlabel = {XLABEL},
+                        ylabel = {YLABEL},
+                        xmin=0, xmax=10, ymin=0, ymax=10,
+                        xtick=\empty, ytick=\empty,
+                        width=7.5cm, height=6cm,
+                        xlabel style={at={(axis description cs:1,0)}, anchor=north east, font=\small},
+                        ylabel style={at={(axis description cs:0,1)}, anchor=south east, font=\small},
+                    ]
+                    % DIAGRAM CODE HERE
+                    \end{axis}
+                \end{tikzpicture}
+            \end{center}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{itemize}\setlength\itemsep{0.4em}
+                \item NOTE 1
+                \item NOTE 2
+                \item NOTE 3
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---- Table -------------------------------------------------
+\begin{frame}{FRAME TITLE}
+    \begin{table}
+        \centering
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{@{}p{4cm}p{7cm}@{}}
+            \toprule
+            \textbf{COL 1} & \textbf{COL 2} \\ \midrule
+            ROW 1          & VALUE          \\
+            ROW 2          & VALUE          \\ \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+% ---- Data / Chart ------------------------------------------
+% For a real-world chart image; replace filename and caption.
+\begin{frame}{FRAME TITLE}
+    \begin{center}
+        \includegraphics[width=0.2 \textwidth]{FILENAME.png}
+    \end{center}
+    \vspace{0.3em}
+    \textbf{SOURCE/CAPTION TEXT}
+    \begin{itemize}
+        \item OBSERVATION 1
+        \item OBSERVATION 2
+    \end{itemize}
+\end{frame}
+
+% ---- Case Study --------------------------------------------
+\begin{frame}{Case Study: TITLE}
+    \textbf{Context:}
+    \begin{itemize}
+        \item CONTEXT POINT 1
+        \item CONTEXT POINT 2
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Economic Analysis:}
+    \begin{itemize}
+        \item ANALYSIS POINT 1
+        \item ANALYSIS POINT 2
+    \end{itemize}
+\end{frame}
+
+% ---- Activity ----------------------------------------------
+\begin{frame}{Activity: TITLE}
+    \textbf{INSTRUCTION (e.g.\ In groups of 3--4, analyse the following:)}
+    \begin{enumerate}
+        \item TASK 1
+        \item TASK 2
+        \item TASK 3
+    \end{enumerate}
+
+    \vspace{0.5em}
+    \textbf{For each:}
+    \begin{itemize}
+        \item PROMPT 1
+        \item PROMPT 2
+    \end{itemize}
+\end{frame}
+
+% ---- Summary -----------------------------------------------
+\begin{frame}{Summary}
+    \begin{itemize}\setlength\itemsep{0.35em}
+        \item KEY POINT 1
+        \item KEY POINT 2
+        \item KEY POINT 3
+    \end{itemize}
+\end{frame}
+
+% ---- Key Terms ---------------------------------------------
+\begin{frame}{Key Terms}
+    \begin{description}
+        \item[TERM 1] DEFINITION
+        \item[TERM 2] DEFINITION
+        \item[TERM 3] DEFINITION
+    \end{description}
+\end{frame}
+
+\end{document}

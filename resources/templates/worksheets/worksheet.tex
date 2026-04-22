@@ -1,0 +1,307 @@
+% ============================================================
+% EconTeacher — Worksheet Template
+% Compile from this directory so the relative \input path to
+% econteacher.sty resolves correctly. Generated worksheets in
+% resources/generated/worksheets/ use the same relative path.
+%
+% SECTION TYPES AVAILABLE:
+%   Key Terms          — definitions with blank answer space
+%   Group Discussion   — scenario boxes + dotfill response lines
+%   Multiple Choice    — standard A–D MCQ questions
+%   Short Response     — questions with answer space and marks
+%   Quantitative       — calculation questions with working space
+%   Diagram            — blank labelled axes for student drawing
+%   Data Response      — extract box followed by questions
+%   Essay              — extended response with evaluation tips
+%
+% ENVIRONMENTS (from econteacher.sty):
+%   \begin{instructions}      — blue box for worksheet instructions
+%   \begin{scenario}[TITLE]   — blue box for discussion scenarios
+%   \begin{extract}[SOURCE]   — grey box for data response text
+%   \begin{keypoint}          — yellow box for evaluation tips
+% ============================================================
+
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in,headheight=15pt]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\input{../../assets/style/econteacher.sty}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Dr Jac Thomas}
+\rhead{Topic index: X.X.X.X}
+\rfoot{Page \thepage}
+
+\begin{document}
+
+% ---- Title block -------------------------------------------
+\begin{center}
+    \Large\textbf{TOPIC TITLE}\\[5pt]
+    \normalsize Topic index: X.X.X.X \quad|\quad AQA AS/A-level Economics\\[3pt]
+    \textit{Total Marks: XX \quad Suggested Time: XX minutes}
+\end{center}
+
+\vspace{0.8em}
+
+\begin{instructions}
+    Answer all questions in the spaces provided. Show your reasoning clearly for calculation questions.
+\end{instructions}
+
+\vspace{1em}
+
+% ============================================================
+% KEY TERMS SECTION
+% Use for vocabulary recall. 2 marks per definition is standard.
+% Adjust \\ spacing to suit expected answer length.
+% ============================================================
+\section*{Key Terms (X marks)}
+
+\textit{Define each of the following terms. Each definition is worth 2 marks.}
+
+\vspace{0.5em}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+
+    \item \textbf{TERM ONE} \\[3cm]
+
+    \item \textbf{TERM TWO} \\[3cm]
+
+    \item \textbf{TERM THREE} \\[3cm]
+
+\end{enumerate}
+
+\newpage
+
+% ============================================================
+% GROUP DISCUSSION SECTION
+% Use for scenario-based group activities. Each scenario sits
+% in a \begin{scenario}[TITLE] box. dotfill lines collect
+% structured responses. State the discussion prompts once
+% above all scenarios, not repeated per scenario.
+% ============================================================
+\section*{Group Discussion (XX minutes)}
+
+\textit{In your groups, discuss each scenario. For each, decide:}
+\begin{enumerate}[label=(\alph*), topsep=2pt]
+    \item DISCUSSION PROMPT 1
+    \item DISCUSSION PROMPT 2
+    \item DISCUSSION PROMPT 3
+\end{enumerate}
+
+\vspace{0.8em}
+
+\begin{scenario}{Scenario 1: TITLE}
+    SCENARIO DESCRIPTION TEXT.
+\end{scenario}
+
+\vspace{0.5em}
+\textbf{Your analysis:}\\
+RESPONSE LABEL 1: \dotfill \\[0.4em]
+RESPONSE LABEL 2: \dotfill \\[0.4em]
+RESPONSE LABEL 3: \dotfill
+
+\vspace{1em}
+
+\begin{scenario}{Scenario 2: TITLE}
+    SCENARIO DESCRIPTION TEXT.
+\end{scenario}
+
+\vspace{0.5em}
+\textbf{Your analysis:}\\
+RESPONSE LABEL 1: \dotfill \\[0.4em]
+RESPONSE LABEL 2: \dotfill \\[0.4em]
+RESPONSE LABEL 3: \dotfill
+
+\newpage
+
+% ============================================================
+% MULTIPLE CHOICE SECTION
+% Standard A–D options. Use (\Alph*) labels for options.
+% 1 mark per question is typical; adjust section total accordingly.
+% ============================================================
+\section*{Multiple Choice (X marks)}
+
+\textit{Circle the correct answer. Each question is worth 1 mark.}
+
+\vspace{0.5em}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+
+    \item QUESTION TEXT?
+    \begin{enumerate}[label=(\Alph*), topsep=2pt]
+        \item OPTION A
+        \item OPTION B
+        \item OPTION C
+        \item OPTION D
+    \end{enumerate}
+
+    \vspace{0.4em}
+
+    \item QUESTION TEXT?
+    \begin{enumerate}[label=(\Alph*), topsep=2pt]
+        \item OPTION A
+        \item OPTION B
+        \item OPTION C
+        \item OPTION D
+    \end{enumerate}
+
+\end{enumerate}
+
+\newpage
+
+% ============================================================
+% SHORT RESPONSE SECTION
+% Questions requiring a few sentences to a paragraph. Use
+% \\[Xcm] for shorter questions; \vspace{Xcm} for longer ones.
+% Mark allocation appears inline at the end of the question text,
+% before the answer space: QUESTION \hfill (X marks)\\[Xcm]
+% ============================================================
+\section*{Short Response (X marks)}
+
+\textit{Answer all questions in the spaces provided.}
+
+\vspace{0.5em}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+
+    \item QUESTION TEXT. \hfill (X marks)\\[4cm]
+
+    \vspace{0.5em}
+
+    \item QUESTION TEXT. \hfill (X marks)\\[5cm]
+
+\end{enumerate}
+
+\newpage
+
+% ============================================================
+% QUANTITATIVE SKILLS SECTION
+% For calculation questions. Always include a "Show your
+% working" prompt. Sub-parts labelled (i), (ii) etc.
+% ============================================================
+\section*{Quantitative Skills (X marks)}
+
+\textit{Show all calculations clearly. State the formula before substituting values.}
+
+\vspace{0.5em}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+
+    \item QUESTION TEXT. \hfill (X marks)
+    \begin{enumerate}[label=(\roman*), topsep=4pt]
+        \item SUB-QUESTION ONE
+        \item SUB-QUESTION TWO
+        \item SUB-QUESTION THREE
+    \end{enumerate}
+
+    \vspace{0.3em}
+    \textit{Show your working:}
+    \vspace{3cm}
+
+    \vspace{0.5em}
+
+    \item QUESTION TEXT. \hfill (X marks)\\
+    \textit{Show your working:}
+    \vspace{3cm}
+
+\end{enumerate}
+
+\newpage
+
+% ============================================================
+% DIAGRAM SECTION
+% Provide blank labelled axes for the student to draw on.
+% Set xtick=\empty and ytick=\empty so students add their own.
+% State clearly what should be drawn and labelled.
+% ============================================================
+\section*{Diagram (X marks)}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+
+    \item QUESTION TEXT — draw and label the diagram below. \hfill (X marks)
+
+    \vspace{0.5em}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                axis lines = middle,
+                xlabel = {XLABEL},
+                ylabel = {YLABEL},
+                xmin=0, xmax=10, ymin=0, ymax=10,
+                xtick=\empty, ytick=\empty,
+                width=11cm, height=8cm,
+                xlabel style={at={(axis description cs:1,0)}, anchor=north east, yshift=-10pt, font=\small},
+                ylabel style={at={(axis description cs:0,1)}, anchor=south east, font=\small},
+            ]
+            % Blank — student draws here
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+
+\end{enumerate}
+
+\newpage
+
+% ============================================================
+% DATA RESPONSE SECTION
+% Source text sits in an \begin{extract}[SOURCE] box.
+% Questions follow as a numbered list beneath.
+% Reference line/paragraph numbers in questions where relevant.
+% ============================================================
+\section*{Data Response (X marks)}
+
+\begin{extract}{Source: PUBLICATION, YEAR}
+    EXTRACT TEXT. This can span multiple paragraphs. Reference specific
+    lines or data points in the questions below.
+
+    \vspace{0.4em}
+    SECOND PARAGRAPH OF EXTRACT.
+\end{extract}
+
+\vspace{0.8em}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+
+    \item Using the data, QUESTION TEXT. \hfill (X marks)\\[4cm]
+
+    \item QUESTION TEXT. \hfill (X marks)\\[5cm]
+
+\end{enumerate}
+
+\newpage
+
+% ============================================================
+% ESSAY SECTION
+% For extended responses (8+ marks). The \begin{keypoint} box
+% gives evaluation prompts. Use \vspace to allocate writing
+% space proportional to marks.
+% ============================================================
+\section*{Essay (X marks)}
+
+\textit{Write a well-structured response. Define key terms, develop chains of reasoning, and evaluate your arguments.}
+
+\vspace{0.5em}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+
+    \item ESSAY QUESTION. \hfill (X marks)\\[0.8em]
+    \begin{keypoint}
+        \textbf{Evaluation tips:} TIP 1. Consider TIP 2. Think about TIP 3.
+    \end{keypoint}
+    \vspace{12cm}
+
+\end{enumerate}
+
+\vfill
+\begin{center}
+    \textbf{[Total: XX marks]}
+\end{center}
+
+\end{document}
