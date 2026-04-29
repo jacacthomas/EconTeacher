@@ -145,6 +145,10 @@ All economics diagrams (AD/AS, supply & demand, labour market, etc.) must follow
 
 These rules ensure elements are provably in the correct positions and diagrams remain easy to edit.
 
+### Clipping
+
+Always add `clip=false` to every `\begin{axis}[...]`. Without it, pgfplots clips all content to the axis rectangle, so curve labels placed near `xmax` or `ymax` with `anchor=west` have their text cut off. `clip=false` lets labels render fully outside the boundary. Plot overflow is not a risk because curve domains are always explicitly set.
+
 ### Curve label placement
 
 Use `anchor=west` for every curve type — the label extends into the whitespace to the right of the placement point. Avoid `anchor=south` above a curve top: if the top is near `ymax`, the label is clipped.
@@ -189,9 +193,13 @@ resources/
     slides/lesson_slides.tex      # Beamer template (one example of every block type)
     worksheets/worksheet.tex      # Worksheet template (one example of every section type)
   generated/
-    slides/               # generated .tex slide files (e.g. 3_2_3_2_topic.tex)
-    worksheets/           # generated .tex worksheet files
-    worksheets/markschemes/  # mark schemes, paired with worksheets
+    {as_level,a_level}/
+      {micro,macro}/
+        X_X_X_X_topic_name/
+          slides/               # .tex source + compiled output; assets/ subdirectory if needed
+          worksheets/
+            questions/          # worksheet .tex + compiled output
+            answers/            # mark scheme .tex + compiled output
 ```
 
 ### econteacher.sty
@@ -216,7 +224,34 @@ Always load with `\input{path/to/econteacher.sty}`. Never use `\usepackage{}` �
 
 - Beamer, Madrid theme, 16pt, `aspectratio=169`
 - Subtitle format: `TOPIC TITLE | AQA AS/A-level Economics`
-- Generated files: `resources/generated/slides/X_X_X_X_topic_name.tex`
+- Generated files: `resources/generated/{as_level,a_level}/{micro,macro}/X_X_X_X_topic_name/slides/X_X_X_X_topic_name.tex`
+- Style path: `\input{../../../../../assets/style/econteacher.sty}`
+- Image path: `\graphicspath{{../../../../../assets/images/}{./figures/}}`
+
+#### Frame overflow: when to split across two frames
+
+Never use `[shrink]`, `[squeeze]`, or `[allowframebreaks]` to handle overflow. Always split instead.
+
+**Classify each piece of content as a "heavy element":**
+- Any tcolorbox (`keypoint`, `definition`, `example`, `examplequestion`, `examplesolution`, `formula`)
+- A TikZ/pgfplots diagram
+- A table
+- A list of 4+ items with an intro line above it
+
+**Split rules (apply in order):**
+1. Two or more tcolorboxes on one frame → always split.
+2. One tcolorbox + list of 4+ items → split, unless every list item is a single short line and there is no intro text.
+3. Diagram + tcolorbox anywhere on the same frame → always split, whether the tcolorbox is inside the same `columns` block or outside it. The diagram column must contain only plain text (lists, labels, result lines) — no tcolorboxes. Move the tcolorbox to a preceding `--- Definition` frame.
+4. Wide table + any other heavy element → always split.
+5. `columns` block + tcolorbox outside the `columns` environment → always split, even if the columns themselves look compact.
+
+**How to split:** exposition first, payoff second.
+- Frame 1: diagram / list / table / `columns` block
+- Frame 2: the `keypoint`, `example`, or solution box
+
+For `examplequestion` + `examplesolution`, always put them on separate frames — the question frame ends with students working; the solution frame is the reveal. Title the second frame with a suffix such as `--- Worked Solution` or `--- Real-World Example`.
+
+**Exception — reference slides (Summary, Key Terms):** Pure list or `description` environments that are too long to fit are the one case where `[allowframebreaks]` is appropriate, because these slides have no tcolorboxes or diagrams and the automatic break point is always clean. Use `\begin{frame}[allowframebreaks]{Title}` and do not manually split them.
 
 ### Worksheets
 
@@ -237,9 +272,10 @@ Always load with `\input{path/to/econteacher.sty}`. Never use `\usepackage{}` �
 
 **Mark allocation convention:** marks always appear inline at the end of the question text, before the answer space — never floating at the bottom of the space. Pattern: `QUESTION TEXT \hfill (X marks)\\[Xcm]`. This applies to every section type.
 
-- Generated files: `resources/generated/worksheets/X_X_X_X_topic_name.tex`
-- Mark schemes: `resources/generated/worksheets/markschemes/X_X_X_X_topic_name_ms.tex`
-  - Use `../../../assets/style/econteacher.sty` (one extra `../` vs the worksheet)
-  - Use `\begin{extract}{...}` for mark band descriptor tables
+- Generated files:
+  - Questions: `resources/generated/{as_level,a_level}/{micro,macro}/X_X_X_X_topic_name/worksheets/questions/X_X_X_X_topic_name.tex`
+  - Answers: `resources/generated/{as_level,a_level}/{micro,macro}/X_X_X_X_topic_name/worksheets/answers/X_X_X_X_topic_name_ms.tex`
+- Both questions and answers use `\input{../../../../../../assets/style/econteacher.sty}`
+- Mark schemes: use `\begin{extract}{...}` for mark band descriptor tables
   - Header: `\lhead{Dr Jac Thomas \quad\textit{Mark Scheme}}`
   - Include per-section marking guidance, worked answers for calculations (with follow-through notes), level descriptors for essays, and indicative content for group discussion (ungraded)

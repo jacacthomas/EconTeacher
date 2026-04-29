@@ -59,6 +59,8 @@ resources/templates/**/*.pdf
 *.out
 *.run.xml
 *.snm
+*.synctex
 *.synctex.gz
+*.synctex.gz.sum.synctex
 *.toc
 *.vrb
